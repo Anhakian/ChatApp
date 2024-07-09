@@ -9,9 +9,9 @@ namespace chat_app_be.Models
         [Required]
         [MaxLength(30)]
         public string Username { get; set; } = string.Empty;
+        [MaxLength(30)]
         public string DisplayName {  get; set; } = string.Empty;
-        [Required]
-        [MinLength(8)]
-        public string Password {  get; set; } = string.Empty;
+        public byte[] PasswordHash {  get; set; }
+        public byte[] PasswordSalt {  get; set; }  
     }
 }
