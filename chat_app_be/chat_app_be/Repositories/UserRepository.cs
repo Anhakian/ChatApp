@@ -1,5 +1,5 @@
-﻿using chat_app_be.Interfaces;
-using chat_app_be.Models;
+﻿using chat_app_be.Models;
+using chat_app_be.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace chat_app_be.Data

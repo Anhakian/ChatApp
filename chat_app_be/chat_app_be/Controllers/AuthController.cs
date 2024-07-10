@@ -7,102 +7,39 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using chat_app_be.Interfaces;
 using chat_app_be.Models.Auth;
+using chat_app_be.Repositories.Interfaces;
+using chat_app_be.Services.Interfaces;
 
 namespace chat_app_be.Controllers
 {
-    [Route("api/")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly JwtOptions _jwtOptions;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserService _userService;
 
-        public AuthController(IOptions<JwtOptions> jwtOptions, IUserRepository userRepository)
+        public AuthController(IUserService userService)
         {
-            _jwtOptions = jwtOptions.Value;
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserRequestDto>> Register(UserDto user)
+        public async Task<IActionResult> Register(UserDto user)
         {
-            if (await _userRepository.UserExistsAsync(user.Username))
-            {
-                return BadRequest("Username already exists");
-            }
-
-            CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            var newUser = new User
-            {
-                Username = user.Username,
-                DisplayName = user.DisplayName,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
-            };
-
-            await _userRepository.AddUserAsync(newUser);
-
-            return Ok(user);
+            var result = await _userService.Register(user);
+            return result != null
+                ? StatusCode(result.StatusCode, result)
+                : StatusCode(StatusCodes.Status500InternalServerError, "Something is wrong");
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserRequestDto request)
+        public async Task<IActionResult> Login(UserRequestDto request)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(request.Username);
-
-            if (user == null)
-            {
-                return BadRequest("User not found");
-            }
-
-            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            {
-                return BadRequest("Wrong Password");
-            }
-
-            string token = CreateToken(user);
-
-            return Ok(token);
-        }
-
-        private string CreateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwtOptions.JwtExpirationTime),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
+            var result = await _userService.Login(request);
+            return result != null
+                ? StatusCode(result.StatusCode, result)
+                : StatusCode(StatusCodes.Status500InternalServerError, "Something is wrong");
         }
     }
 }

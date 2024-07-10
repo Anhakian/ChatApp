@@ -16,6 +16,8 @@ namespace chat_app_be.Mappings
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
 
             CreateMap<UserDto, UserRequestDto>().ReverseMap();
+
+            CreateMap<UserDto, UserResponseDto>().ReverseMap();
         }
     }
 }

@@ -19,4 +19,9 @@ namespace chat_app_be.Dtos
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
+
+    public class UserResponseDto
+    {
+        public string Username { get; set; } = string.Empty;
+    }
 }

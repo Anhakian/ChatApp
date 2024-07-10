@@ -1,6 +1,8 @@
 using chat_app_be.Data;
-using chat_app_be.Interfaces;
 using chat_app_be.Models.Auth;
+using chat_app_be.Repositories.Interfaces;
+using chat_app_be.Services;
+using chat_app_be.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +47,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
