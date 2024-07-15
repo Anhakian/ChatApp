@@ -28,45 +28,59 @@ namespace chat_app_be.Services
 
         public async Task<Response> Register(UserDto user)
         {
-            if (await _userRepository.UserExistsAsync(user.Username))
+            try
             {
-                return new Response(statusCodes: StatusCodes.Status204NoContent, "Username Not Found");
+                if (await _userRepository.UserExistsAsync(user.Username))
+                {
+                    return new Response(statusCodes: StatusCodes.Status400BadRequest, "Username Already Exists");
+                }
+
+                CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+                var newUser = new User
+                {
+                    Username = user.Username,
+                    DisplayName = user.DisplayName,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
+                };
+
+                await _userRepository.AddUserAsync(newUser);
+
+                UserResponseDto userResponse = _mapper.Map<UserResponseDto>(newUser);
+
+                return new Response(statusCodes: StatusCodes.Status200OK, userResponse);
             }
-
-            CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            var newUser = new User
+            catch (Exception e)
             {
-                Username = user.Username,
-                DisplayName = user.DisplayName,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
-            };
-
-            await _userRepository.AddUserAsync(newUser);
-
-            UserResponseDto userResponse = _mapper.Map<UserResponseDto>(newUser);
-
-            return new Response(statusCodes: StatusCodes.Status200OK, userResponse);
+                return new Response(statusCodes: StatusCodes.Status500InternalServerError, "Something is Wrong");
+            }
         }
 
-        public async Task<Response> Login (UserRequestDto request)
+        public async Task<Response> Login(UserRequestDto request)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(request.Username);
-
-            if (user == null)
+            try
             {
-                return new Response(statusCodes: StatusCodes.Status204NoContent, "User Not Found"); ;
-            }
+                var user = await _userRepository.GetUserByUsernameAsync(request.Username);
 
-            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                if (user == null)
+                {
+                    return new Response(statusCodes: StatusCodes.Status404NotFound, "User Not Found"); ;
+                }
+
+                if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                {
+                    return new Response(statusCodes: StatusCodes.Status400BadRequest, "Wrong Password"); ;
+                }
+
+                string token = CreateToken(user);
+
+                return new Response(statusCodes: StatusCodes.Status200OK, data: token);
+            }
+            catch (Exception e)
             {
-                return new Response(statusCodes: StatusCodes.Status400BadRequest, "Wrong Password"); ;
+                return new Response(statusCodes: StatusCodes.Status500InternalServerError, "Something is Wrong");
             }
-
-            string token = CreateToken(user);
-
-            return new Response(statusCodes: StatusCodes.Status200OK, data: token);
         }
 
         private string CreateToken(User user)

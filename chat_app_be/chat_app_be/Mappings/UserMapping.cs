@@ -17,7 +17,7 @@ namespace chat_app_be.Mappings
 
             CreateMap<UserDto, UserRequestDto>().ReverseMap();
 
-            CreateMap<UserDto, UserResponseDto>().ReverseMap();
+            CreateMap<User, UserResponseDto>().ReverseMap();
         }
     }
 }
