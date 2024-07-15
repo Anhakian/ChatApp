@@ -39,7 +39,7 @@ namespace chat_app_be.Data
             }
         }
 
-        public async Task<bool> UserExistsAsync(string username)
+        public async Task<bool> IsUserExist(string username)
         {
             return await _context.Users.AnyAsync(u => u.Username == username);
         }

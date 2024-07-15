@@ -30,7 +30,7 @@ namespace chat_app_be.Services
         {
             try
             {
-                if (await _userRepository.UserExistsAsync(user.Username))
+                if (await _userRepository.IsUserExist(user.Username))
                 {
                     return new Response(statusCodes: StatusCodes.Status400BadRequest, "Username Already Exists");
                 }
@@ -75,7 +75,14 @@ namespace chat_app_be.Services
 
                 string token = CreateToken(user);
 
-                return new Response(statusCodes: StatusCodes.Status200OK, data: token);
+                var response = new AuthDto
+                {
+                    Username = user.Username,
+                    DisplayName = user.DisplayName,
+                    Token = token,
+                };
+
+                return new Response(statusCodes: StatusCodes.Status200OK, data: response);
             }
             catch (Exception e)
             {

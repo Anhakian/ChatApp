@@ -7,6 +7,6 @@ namespace chat_app_be.Repositories.Interfaces
     {
         Task<User> GetUserByUsernameAsync(string username);
         Task<User> AddUserAsync(User user);
-        Task<bool> UserExistsAsync(string username);
+        Task<bool> IsUserExist(string username);
     }
 }
