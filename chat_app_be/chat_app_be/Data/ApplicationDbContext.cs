@@ -12,6 +12,6 @@ namespace chat_app_be.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Group> Groups { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
     }
 }
