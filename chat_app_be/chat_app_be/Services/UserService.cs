@@ -11,6 +11,8 @@ using chat_app_be.Models.Response;
 using AutoMapper;
 using chat_app_be.Services.Interfaces;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic;
+using System.Data;
 
 namespace chat_app_be.Services
 {
@@ -65,12 +67,12 @@ namespace chat_app_be.Services
 
                 if (user == null)
                 {
-                    return new Response(statusCodes: StatusCodes.Status404NotFound, "User Not Found"); ;
+                    return new Response(statusCodes: StatusCodes.Status404NotFound, "User Not Found"); 
                 }
 
                 if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 {
-                    return new Response(statusCodes: StatusCodes.Status400BadRequest, "Wrong Password"); ;
+                    return new Response(statusCodes: StatusCodes.Status400BadRequest, "Wrong Password"); 
                 }
 
                 string token = CreateToken(user);
@@ -92,15 +94,19 @@ namespace chat_app_be.Services
 
         private string CreateToken(User user)
         {
-            List<Claim> claims = new List<Claim>
+            var claims = new[]
             {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.JwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var token = new JwtSecurityToken(
+                issuer: null,
+                audience: null,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(_jwtOptions.Value.JwtExpirationTime),
                 signingCredentials: creds
