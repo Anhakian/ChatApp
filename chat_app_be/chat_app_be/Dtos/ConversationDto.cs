@@ -3,7 +3,7 @@
     public class ConversationRequestDto
     {
         public string ConversationName { get; set; } = string.Empty;
-        public string Username2 { get; set; } = string.Empty;
+        public string UserName2 { get; set; } = string.Empty;
     }
 
     public class ConversationResponseDto

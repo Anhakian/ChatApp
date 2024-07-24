@@ -11,9 +11,7 @@ namespace chat_app_be.Mappings
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Password, opt => opt.Ignore());
 
-            CreateMap<UserDto, User>()
-                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
-                .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
+            CreateMap<UserDto, User>();
 
             CreateMap<UserDto, UserRequestDto>().ReverseMap();
 

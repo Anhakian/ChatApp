@@ -8,8 +8,8 @@ namespace chat_app_be.Models
         [Required]
         public string ConversationName { get; set; } = string.Empty;
         [Required]
-        public int User1Id { get; set; }
+        public string User1Id { get; set; }
         [Required]
-        public int User2Id { get; set; }
+        public string User2Id { get; set; }
     }
 }

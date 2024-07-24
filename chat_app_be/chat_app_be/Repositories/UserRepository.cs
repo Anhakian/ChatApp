@@ -17,7 +17,7 @@ namespace chat_app_be.Data
         {
             try
             {
-                return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                return await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
             }
             catch (Exception e)
             {
@@ -41,7 +41,7 @@ namespace chat_app_be.Data
 
         public async Task<bool> IsUserExist(string username)
         {
-            return await _context.Users.AnyAsync(u => u.Username == username);
+            return await _context.Users.AnyAsync(u => u.UserName == username);
         }
     }
 }

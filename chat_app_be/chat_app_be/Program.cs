@@ -1,15 +1,14 @@
 using chat_app_be.Data;
+using chat_app_be.Models;
 using chat_app_be.Models.Auth;
 using chat_app_be.Repositories;
 using chat_app_be.Repositories.Interfaces;
 using chat_app_be.Services;
 using chat_app_be.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,71 +21,11 @@ builder.Services.Configure<RouteOptions>(options =>
 
 // Configure JWT
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
-var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey)),
-            ClockSkew = TimeSpan.Zero,
-            RequireExpirationTime = false,
-            RequireSignedTokens = true
-        };
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-                if (authHeader != null && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                {
-                    context.Token = authHeader.Substring("Bearer ".Length).Trim();
-                    logger.LogInformation($"Extracted token: {context.Token}");
-                }
-                else
-                {
-                    logger.LogWarning("No bearer token found in the request.");
-                }
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogInformation("Token validated successfully");
-                logger.LogInformation($"Authenticated user: {context.Principal.Identity.Name}");
-                foreach (var claim in context.Principal.Claims)
-                {
-                    logger.LogInformation($"Claim: {claim.Type} = {claim.Value}");
-                }
-                return Task.CompletedTask;
-            },
-            OnAuthenticationFailed = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogInformation($"Authentication failed: {context.Exception.GetType().Name} - {context.Exception.Message}");
-                if (context.Exception.InnerException != null)
-                {
-                    logger.LogInformation($"Inner exception: {context.Exception.InnerException.Message}");
-                }
-                return Task.CompletedTask;
-            },
-            OnChallenge = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogInformation($"OnChallenge: {context.Error}, {context.ErrorDescription}");
-                return Task.CompletedTask;
-            }
-        };
-    });
-
-builder.Services.AddAuthorization();
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -141,7 +80,7 @@ builder.Logging.AddDebug();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000") // Replace with your frontend URL
+        builder => builder.WithOrigins("http://localhost:3000") 
                           .AllowAnyMethod()
                           .AllowAnyHeader());
 });

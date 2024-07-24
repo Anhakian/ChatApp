@@ -6,7 +6,7 @@ namespace chat_app_be.Dtos
     {
         [Required]
         [MaxLength(30)]
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         [MaxLength(30)]
         public string DisplayName { get; set; } = string.Empty;
         [Required]
@@ -16,12 +16,12 @@ namespace chat_app_be.Dtos
 
     public class UserRequestDto
     {
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 
     public class UserResponseDto
     {
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
     }
 }
