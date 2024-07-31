@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import AccountHandler from '@/components/AccountHandler';
 import MessageSideBar from '@/components/chatInterface/MessageSideBar';
 import { Conversation } from '@/types/conversation';
+import ConversationView from '@/components/chatInterface/ConversationView';
 
 const Dashboard: React.FC = () => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [isSideBarOpen, setIsSideBarOpen] = useState(true);
+    const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
     useEffect(() => {
         // TODO: Fetch Conversations from database
@@ -20,18 +22,35 @@ const Dashboard: React.FC = () => {
     }, []);
 
     const toggleSideBar = () => {
-      setIsSideBarOpen(!isSideBarOpen);
-      console.log('Click')
-      console.log(isSideBarOpen)
+        setIsSideBarOpen(!isSideBarOpen);
+    };
+
+    const handleConversationClick = (conversation: Conversation) => {
+        setSelectedConversation(conversation);
+        // On mobile, close the sidebar when a conversation is selected
+        if (window.innerWidth < 768) {
+            setIsSideBarOpen(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background flex flex-col">
             <AccountHandler />
-            <main className="flex md:flex-row items-stretch"> 
-                <MessageSideBar conversations={conversations} isOpen={isSideBarOpen} toggleSidebar={toggleSideBar} />
-                <div className="flex-grow p-4">
-                    {/* Main content goes here */}
+            <main className="flex flex-grow overflow-hidden">
+                <MessageSideBar 
+                    conversations={conversations} 
+                    isOpen={isSideBarOpen} 
+                    toggleSidebar={toggleSideBar}
+                    onConversationClick={handleConversationClick}
+                />
+                <div className="flex-grow overflow-hidden">
+                    {selectedConversation ? (
+                        <ConversationView conversation={selectedConversation} />
+                    ) : (
+                        <div className="flex items-center justify-center h-full">
+                            <p className="text-gray-500">Select a conversation to start chatting</p>
+                        </div>
+                    )}
                 </div>
             </main>
         </div>
