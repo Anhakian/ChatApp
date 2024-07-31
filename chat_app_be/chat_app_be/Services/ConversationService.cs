@@ -5,7 +5,6 @@ using chat_app_be.Models.Response;
 using chat_app_be.Repositories.Interfaces;
 using chat_app_be.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace chat_app_be.Services
 {
@@ -48,15 +47,21 @@ namespace chat_app_be.Services
                     return new Response(StatusCodes.Status409Conflict, "Conversation already exists between these users");
                 }
 
+                var conversationName = conversationRequest.ConversationName == "string"
+                    ? $"{user1.DisplayName} & {user2.DisplayName}"
+                    : conversationRequest.ConversationName;
+
                 var conversation = new Conversation
                 {
-                    ConversationName = conversationRequest.ConversationName,
+                    ConversationName = conversationName,
                     User1Id = user1.Id,
                     User2Id = user2.Id
                 };
 
                 await _conversationRepository.CreateConversation(conversation);
-                return new Response(StatusCodes.Status200OK, $"You have successfully created a conversation with {user2.UserName}");
+                var response = _mapper.Map<ConversationResponseDto>(conversation);
+
+                return new Response(StatusCodes.Status200OK, $"You have successfully created a conversation with {user2.UserName}", response);
             }
             catch (Exception e)
             {
@@ -69,11 +74,6 @@ namespace chat_app_be.Services
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(newConversationName))
-                {
-                    return new Response(StatusCodes.Status400BadRequest, $"New conversation name cannot be empty");
-                }
-
                 var existingConversation = await _conversationRepository.GetConversationById(conversationId);
                 if (existingConversation == null)
                 {

@@ -1,14 +1,5 @@
 ﻿using chat_app_be.Dtos;
-using chat_app_be.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using chat_app_be.Models.Auth;
-using chat_app_be.Repositories.Interfaces;
 using chat_app_be.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 

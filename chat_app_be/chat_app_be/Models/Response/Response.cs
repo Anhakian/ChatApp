@@ -21,6 +21,13 @@ namespace chat_app_be.Models.Response
             Data = data;
         }
 
+        public Response(int statusCodes, string message, object data)
+        {
+            StatusCode = statusCodes;
+            Message = message;
+            Data = data;
+        }
+
         public Response(int statusCodes)
         {
             StatusCode = statusCodes;
