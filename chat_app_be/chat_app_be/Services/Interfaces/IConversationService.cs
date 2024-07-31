@@ -5,6 +5,7 @@ namespace chat_app_be.Services.Interfaces
 {
     public interface IConversationService
     {
-        Task<Response> CreateConversation(ConversationRequestDto conversationRequest, string currentUsername);
+        Task<Response> CreateConversation(ConversationRequestDto conversationRequest);
+        Task<Response> UpdateConversationName(int conversationId, string newConversationName);
     }
 }

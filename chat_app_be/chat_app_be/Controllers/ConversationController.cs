@@ -20,36 +20,16 @@ namespace chat_app_be.Controllers
         [HttpPost("createConvo")]
         public async Task<IActionResult> CreateConversation(ConversationRequestDto conversationRequest)
         {
-            foreach (var claim in User.Claims)
-            {
-                _logger.LogInformation($"Claim: {claim.Type} = {claim.Value}");
-            }
+            var result = await _conversationService.CreateConversation(conversationRequest);
+            return result != null
+                ? StatusCode(result.StatusCode, result)
+                : StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
+        }
 
-            // Extract username from claims
-            var currentUsername = User.Identity?.Name;
-
-            if (string.IsNullOrEmpty(currentUsername))
-            {
-                _logger.LogWarning("Current username is null or empty.");
-                return Unauthorized("User is not authenticated.");
-            }
-
-            // Log the token
-            string authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-            _logger.LogInformation($"Authorization Header: {authHeader}");
-
-            if (authHeader != null && authHeader.StartsWith("Bearer "))
-            {
-                string token = authHeader.Substring("Bearer ".Length).Trim();
-                _logger.LogInformation($"Token: {token}");
-            }
-            else
-            {
-                _logger.LogInformation("No Bearer token found in the request.");
-            }
-
-            // Pass currentUsername to the service method
-            var result = await _conversationService.CreateConversation(conversationRequest, currentUsername);
+        [HttpPut("updateConversationName")]
+        public async Task<IActionResult> UpdateConversationName(int conversationId, string newConversationName)
+        {
+            var result = await _conversationService.UpdateConversationName(conversationId, newConversationName);
             return result != null
                 ? StatusCode(result.StatusCode, result)
                 : StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");

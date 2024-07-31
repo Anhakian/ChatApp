@@ -26,11 +26,11 @@ namespace chat_app_be.Services
             _logger = logger;
         }
 
-        public async Task<Response> CreateConversation(ConversationRequestDto conversationRequest, string currentUsername)
+        public async Task<Response> CreateConversation(ConversationRequestDto conversationRequest)
         {
             try
             {
-                var user1 = await _userManager.FindByNameAsync(currentUsername);
+                var user1 = await _userManager.FindByNameAsync(conversationRequest.UserName1);
                 if (user1 == null)
                 {
                     return new Response(StatusCodes.Status404NotFound, "Current User Not Found");
@@ -40,6 +40,12 @@ namespace chat_app_be.Services
                 if (user2 == null)
                 {
                     return new Response(StatusCodes.Status404NotFound, "User Not Found");
+                }
+
+                var existingConversation = await _conversationRepository.GetConversationByUsers(user1.Id, user2.Id);
+                if (existingConversation != null)
+                {
+                    return new Response(StatusCodes.Status409Conflict, "Conversation already exists between these users");
                 }
 
                 var conversation = new Conversation
@@ -59,5 +65,32 @@ namespace chat_app_be.Services
             }
         }
 
+        public async Task<Response> UpdateConversationName(int conversationId, string newConversationName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(newConversationName))
+                {
+                    return new Response(StatusCodes.Status400BadRequest, $"New conversation name cannot be empty");
+                }
+
+                var existingConversation = await _conversationRepository.GetConversationById(conversationId);
+                if (existingConversation == null)
+                {
+                    return new Response(StatusCodes.Status404NotFound, "Conversation not found");
+                }
+
+                existingConversation.ConversationName = newConversationName;
+
+                await _conversationRepository.UpdateConversation(existingConversation);
+
+                return new Response(StatusCodes.Status200OK, $"The conversation name has been updated to {existingConversation.ConversationName}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error renaming conversation");
+                return new Response(StatusCodes.Status500InternalServerError, "Something went wrong");
+            }
+        }
     }
 }
