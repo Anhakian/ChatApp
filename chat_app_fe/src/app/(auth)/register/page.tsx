@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
+import router, { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AuthInput from '@/components/auth/AuthInput';
 import Logo from '@/components/Logo';
@@ -9,9 +10,37 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    //TODO: Connect to the API and finish the function
+    e.preventDefault();
+
+    const loginData = { username, password };
+
+    try {
+      const response = await fetch(`https://localhost:7252/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Register failed:', errorData.message);
+        alert('Register failed: ' + errorData.message);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Register successful:', data);
+
+      router.push('/login');
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred: ' + error);
+    }
   };
   
   return (
@@ -31,21 +60,21 @@ export default function Register() {
                 id="username"
                 type="text"
                 value={username}
-                onChange={setUsername}
+                onChange={(value) => setUsername(value)}
               />
               <AuthInput
                 label="Display Name"
                 id="displayName"
                 type="text"
                 value={displayName}
-                onChange={setDisplayName}
+                onChange={(value) => setDisplayName(value)}
               />
               <AuthInput
                 label="Password"
                 id="password"
                 type="password"
                 value={password}
-                onChange={setPassword}
+                onChange={(value) => setPassword(value)}
               />
               <div>
                 <button type="submit" className="w-full bg-accent text-white px-7 py-3 rounded-lg hover:bg-accent-dark focus:outline-none focus:bg-accent-dark">Login</button>
