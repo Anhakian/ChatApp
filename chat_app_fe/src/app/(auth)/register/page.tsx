@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import router, { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import AuthInput from '@/components/auth/AuthInput';
-import Logo from '@/components/Logo';
+import React, { useState } from "react";
+import router, { useRouter } from "next/navigation";
+import Link from "next/link";
+import AuthInput from "@/components/auth/AuthInput";
+import Logo from "@/components/Logo";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,30 +19,30 @@ export default function Register() {
 
     try {
       const response = await fetch(`https://localhost:7252/api/auth/register`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Register failed:', errorData.message);
-        alert('Register failed: ' + errorData.message);
+        console.error("Register failed:", errorData.message);
+        alert("Register failed: " + errorData.message);
         return;
       }
 
       const data = await response.json();
-      console.log('Register successful:', data);
+      console.log("Register successful:", data);
 
-      router.push('/login');
+      router.push("/login");
     } catch (error) {
-      console.error('An error occurred:', error);
-      alert('An error occurred: ' + error);
+      console.error("An error occurred:", error);
+      alert("An error occurred: " + error);
     }
   };
-  
+
   return (
     <div>
       <main className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-background">
@@ -77,10 +77,21 @@ export default function Register() {
                 onChange={(value) => setPassword(value)}
               />
               <div>
-                <button type="submit" className="w-full bg-accent text-white px-7 py-3 rounded-lg hover:bg-accent-dark focus:outline-none focus:bg-accent-dark">Login</button>
+                <button
+                  type="submit"
+                  className="w-full bg-accent text-white px-7 py-3 rounded-lg hover:bg-accent-dark focus:outline-none focus:bg-accent-dark"
+                >
+                  Login
+                </button>
               </div>
               <div className="text-lg font-medium text-center text-accent">
-                Already have an account? <Link href="/login" className="underline hover:text-text cursor-pointer">Login</Link>
+                <span>Already have an account?</span>{" "}
+                <Link
+                  href="/login"
+                  className="underline hover:text-text cursor-pointer"
+                >
+                  Login
+                </Link>
               </div>
             </form>
           </div>
