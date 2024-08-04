@@ -9,15 +9,13 @@ namespace chat_app_be.Controllers
     public class ConversationController : ControllerBase
     {
         private readonly IConversationService _conversationService;
-        private readonly ILogger<ConversationController> _logger;
 
-        public ConversationController(IConversationService conversationService, ILogger<ConversationController> logger)
+        public ConversationController(IConversationService conversationService)
         {
             _conversationService = conversationService;
-            _logger = logger;
         }
 
-        [HttpPost("createConvo")]
+        [HttpPost]
         public async Task<IActionResult> CreateConversation(ConversationRequestDto conversationRequest)
         {
             var result = await _conversationService.CreateConversation(conversationRequest);
