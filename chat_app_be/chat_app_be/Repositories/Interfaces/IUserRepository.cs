@@ -1,5 +1,4 @@
-﻿using chat_app_be.Dtos;
-using chat_app_be.Models;
+﻿using chat_app_be.Models;
 
 namespace chat_app_be.Repositories.Interfaces
 {

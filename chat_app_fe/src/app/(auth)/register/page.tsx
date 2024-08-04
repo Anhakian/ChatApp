@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import router, { useRouter } from "next/navigation";
-import Link from "next/link";
-import AuthInput from "@/components/auth/AuthInput";
-import Logo from "@/components/Logo";
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import AuthInput from '@/components/auth/AuthInput';
+import Logo from '@/components/Logo';
+import NavBar from '@/components/NavBar';
+import Button from '@/components/Button';
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -45,9 +47,10 @@ export default function Register() {
 
   return (
     <div>
+      <NavBar />
       <main className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center justify-center space-y-4 md:mt-16 md:mb-16 md:mr-28">
-          <Logo />
+          <Logo title='ChatApp' subtitle='A Chatting Platform' />
         </div>
         <div className="mt-8 md:mt-0 md:ml-36 md:w-auto">
           <div className="p-10 bg-white rounded-lg shadow-lg">
@@ -76,14 +79,9 @@ export default function Register() {
                 value={password}
                 onChange={(value) => setPassword(value)}
               />
-              <div>
-                <button
-                  type="submit"
-                  className="w-full bg-accent text-white px-7 py-3 rounded-lg hover:bg-accent-dark focus:outline-none focus:bg-accent-dark"
-                >
-                  Login
-                </button>
-              </div>
+
+              <Button type='submit' name='Register' />
+              
               <div className="text-lg font-medium text-center text-accent">
                 <span>Already have an account?</span>{" "}
                 <Link
