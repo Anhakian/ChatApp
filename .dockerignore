@@ -36,3 +36,5 @@
 # Exclude general files
 LICENSE
 README.md
+
+.env
