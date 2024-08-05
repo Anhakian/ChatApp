@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -9,9 +9,9 @@ import NavBar from '@/components/NavBar';
 import Button from '@/components/Button';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -21,30 +21,30 @@ export default function Register() {
 
     try {
       const response = await fetch(`https://localhost:7252/api/auth/register`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Register failed:', errorData.message);
-        alert('Register failed: ' + errorData.message);
+        console.error("Register failed:", errorData.message);
+        alert("Register failed: " + errorData.message);
         return;
       }
 
       const data = await response.json();
-      console.log('Register successful:', data);
+      console.log("Register successful:", data);
 
-      router.push('/login');
+      router.push("/login");
     } catch (error) {
-      console.error('An error occurred:', error);
-      alert('An error occurred: ' + error);
+      console.error("An error occurred:", error);
+      alert("An error occurred: " + error);
     }
   };
-  
+
   return (
     <div>
       <NavBar />
@@ -83,7 +83,13 @@ export default function Register() {
               <Button type='submit' name='Register' />
               
               <div className="text-lg font-medium text-center text-accent">
-                Already have an account? <Link href="/login" className="underline hover:text-text cursor-pointer">Login</Link>
+                <span>Already have an account?</span>{" "}
+                <Link
+                  href="/login"
+                  className="underline hover:text-text cursor-pointer"
+                >
+                  Login
+                </Link>
               </div>
             </form>
           </div>
