@@ -92,5 +92,21 @@ namespace chat_app_be.Services
                 return new Response(StatusCodes.Status500InternalServerError, "Something went wrong");
             }
         }
+
+        public async Task<Response> GetConversationsByUserId(string userName)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(userName);
+                var conversations = await _conversationRepository.GetConversationsByUserId(user.Id);
+                var response = _mapper.Map<List<ConversationResponseDto>>(conversations);
+                return new Response(StatusCodes.Status200OK, "Success", response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting conversations");
+                return new Response(StatusCodes.Status500InternalServerError, "Something went wrong");
+            }
+        }
     }
 }

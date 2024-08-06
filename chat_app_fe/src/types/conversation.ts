@@ -1,12 +1,10 @@
 export type Conversation = {
     id: number;
-    name: string;
-    image: string;
+    conversationName: string;
     lastMessage: string;
 }
 
 export type MinimalConversation = {
     id: number;
-    name: string;
-    image: string;
+    conversationName: string;
 };

@@ -86,6 +86,7 @@ namespace chat_app_be.Services
 
                 var response = new AuthDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     DisplayName = user.DisplayName,
                     Token = token,
@@ -117,6 +118,25 @@ namespace chat_app_be.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<Response> GetUserById(string id)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+
+                if (user == null)
+                {
+                    return new Response(StatusCodes.Status404NotFound, "User Not Found");
+                }
+
+                return new Response(StatusCodes.Status200OK, user);
+            }
+            catch (Exception e)
+            {
+                return new Response(StatusCodes.Status500InternalServerError, "Something went wrong");
+            }
         }
     }
 }

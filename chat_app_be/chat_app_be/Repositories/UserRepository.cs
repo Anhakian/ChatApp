@@ -43,5 +43,17 @@ namespace chat_app_be.Data
         {
             return await _context.Users.AnyAsync(u => u.UserName == username);
         }
+
+        public async Task<User> GetUserById(string id)
+        {
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

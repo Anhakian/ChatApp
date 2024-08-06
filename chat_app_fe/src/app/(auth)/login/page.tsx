@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import AuthInput from '@/components/auth/AuthInput';
-import Logo from '@/components/Logo';
-import NavBar from '@/components/NavBar';
-import Button from '@/components/Button';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import AuthInput from "@/components/auth/AuthInput";
+import Logo from "@/components/Logo";
+import NavBar from "@/components/NavBar";
+import Button from "@/components/Button";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -19,7 +19,7 @@ export default function Login() {
     const loginData = { username, password };
 
     try {
-      const response = await fetch(`https://localhost:7252/api/auth/login`, {
+      const response = await fetch(`http://localhost:7252/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,8 +34,12 @@ export default function Login() {
         return;
       }
 
-      const data = await response.json();
-      console.log("Login successful:", data);
+      const result = await response.json();
+
+      localStorage.setItem("Id", result.data.userId);
+      localStorage.setItem("userName", result.data.userName);
+      localStorage.setItem("displayName", result.data.displayName);
+      localStorage.setItem("token", result.data.token);
 
       router.push("/dashboard");
     } catch (error) {
@@ -49,7 +53,7 @@ export default function Login() {
       <NavBar />
       <main className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center justify-center space-y-4 md:mt-16 md:mb-16 md:mr-28">
-          <Logo title='ChatApp' subtitle='A Chatting Platform' />
+          <Logo title="ChatApp" subtitle="A Chatting Platform" />
         </div>
         <div className="mt-8 md:mt-0 md:ml-36 md:w-auto">
           <div className="p-10 bg-white rounded-lg shadow-lg">
@@ -72,7 +76,7 @@ export default function Login() {
                 onChange={(value) => setPassword(value)}
               />
 
-              <Button type='submit' name='Login' />
+              <Button type="submit" name="Login" />
 
               <div className="text-lg font-medium text-center text-accent">
                 <span>Don&apos;t have an account?</span>{" "}

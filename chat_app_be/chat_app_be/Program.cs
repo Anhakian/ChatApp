@@ -1,3 +1,4 @@
+using chat_app_be;
 using chat_app_be.Data;
 using chat_app_be.Models;
 using chat_app_be.Models.Auth;
@@ -80,6 +81,12 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register CassandraConfig
+builder.Services.AddSingleton<CassandraConfig>();
+
+// Register SignalR
+builder.Services.AddSignalR();
+
 // Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -99,9 +106,10 @@ builder.Logging.AddDebug();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000") 
+        builder => builder.WithOrigins("http://localhost:3000")
                           .AllowAnyMethod()
-                          .AllowAnyHeader());
+                          .AllowAnyHeader()
+                          .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -135,5 +143,7 @@ app.UseExceptionHandler(a => a.Run(async context =>
 }));
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("api/chat");
 
 app.Run();

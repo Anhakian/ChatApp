@@ -7,5 +7,6 @@ namespace chat_app_be.Services.Interfaces
     {
         Task<Response> CreateConversation(ConversationRequestDto conversationRequest);
         Task<Response> UpdateConversationName(int conversationId, string newConversationName);
+        Task<Response> GetConversationsByUserId(string userId);
     }
 }

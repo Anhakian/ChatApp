@@ -7,5 +7,6 @@ namespace chat_app_be.Services.Interfaces
     {
         Task<Response> Register(UserDto user);
         Task<Response> Login(UserRequestDto request);
+        Task<Response> GetUserById(string id);
     }
 }

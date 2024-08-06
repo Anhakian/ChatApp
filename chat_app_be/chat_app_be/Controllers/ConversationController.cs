@@ -32,5 +32,14 @@ namespace chat_app_be.Controllers
                 ? StatusCode(result.StatusCode, result)
                 : StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetConversationByUserId(string userName)
+        {
+            var result = await _conversationService.GetConversationsByUserId(userName);
+            return result != null
+                ? StatusCode(result.StatusCode, result)
+                : StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
+        }
     }
 }
