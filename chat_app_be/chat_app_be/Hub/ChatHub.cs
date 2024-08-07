@@ -20,7 +20,7 @@ public class ChatHub : Hub
     public async Task JoinConversation(User user, Conversation conversation)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, conversation.ConversationName);
-        await Clients.All.SendAsync("ReceiveMessage", $"{user.UserName} has joined the {conversation.ConversationName}.");
+        await Clients.All.SendAsync("ReceiveMessage", $"{user.UserName} has joined {conversation.ConversationName}.");
     }
 
     public async Task SendMessage(int conversationId, string message, string senderId)

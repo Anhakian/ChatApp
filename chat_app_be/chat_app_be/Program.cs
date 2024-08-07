@@ -105,7 +105,7 @@ builder.Logging.AddDebug();
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
+    options.AddPolicy("AllowSpecificOrigins",
         builder => builder.WithOrigins("http://localhost:3000")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
@@ -125,7 +125,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

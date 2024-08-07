@@ -15,37 +15,38 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     const loginData = { username, password };
-
+  
     try {
-      const response = await fetch(`http://localhost:7252/api/auth/login`, {
+      const response = await fetch("https://localhost:7252/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Login failed:", errorData.message);
         alert("Login failed: " + errorData.message);
         return;
       }
-
+  
       const result = await response.json();
-
-      localStorage.setItem("Id", result.data.userId);
+  
+      localStorage.setItem("id", result.data.id);
       localStorage.setItem("userName", result.data.userName);
       localStorage.setItem("displayName", result.data.displayName);
       localStorage.setItem("token", result.data.token);
-
+  
+      console.log(localStorage.getItem("id"));
       router.push("/dashboard");
     } catch (error) {
       console.error("An error occurred:", error);
       alert("An error occurred: " + error);
-    }
+    }  
   };
 
   return (

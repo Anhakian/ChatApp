@@ -20,7 +20,7 @@ export default function Register() {
     const registerData = { username, displayName, password };
 
     try {
-      const response = await fetch(`http://localhost:7252/api/auth/register`, {
+      const response = await fetch(`https://localhost:7252/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

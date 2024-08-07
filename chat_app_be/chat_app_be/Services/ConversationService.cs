@@ -47,7 +47,7 @@ namespace chat_app_be.Services
                     return new Response(StatusCodes.Status409Conflict, "Conversation already exists between these users");
                 }
 
-                var conversationName = conversationRequest.ConversationName == "string"
+                var conversationName = conversationRequest.ConversationName == "string" || conversationRequest.ConversationName == string.Empty
                     ? $"{user1.DisplayName} & {user2.DisplayName}"
                     : conversationRequest.ConversationName;
 

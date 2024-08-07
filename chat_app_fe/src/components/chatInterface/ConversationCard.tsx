@@ -13,10 +13,10 @@ const ConversationCard: React.FC<Props> = ({ conversation, onClick }) => {
 
   return (
     <div
-      className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 cursor-pointer"
+      className="flex items-center p-4 bg-primary rounded-lg hover:bg-accent cursor-pointer"
       onClick={onClick}
     >
-      <div className="w-2/3 flex flex-col">
+      <div className="w-3/4 flex flex-col">
         {isFullConversation(conversation) ? (
           <>
             <h3 className="text-lg font-semibold">
@@ -27,7 +27,7 @@ const ConversationCard: React.FC<Props> = ({ conversation, onClick }) => {
             </p>
           </>
         ) : (
-          <p className="text-lg font-semibold">
+          <p className="text-lg font-semibold text-left">
             {conversation.conversationName}
           </p>
         )}

@@ -131,7 +131,8 @@ namespace chat_app_be.Services
                     return new Response(StatusCodes.Status404NotFound, "User Not Found");
                 }
 
-                return new Response(StatusCodes.Status200OK, user);
+                UserResponseDto userResponse = _mapper.Map<UserResponseDto>(user);
+                return new Response(StatusCodes.Status200OK, userResponse);
             }
             catch (Exception e)
             {

@@ -3,6 +3,7 @@ import { Conversation } from "@/types/conversation";
 import { Message } from "@/types/message";
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import axios from "axios";
+import { Send } from "react-feather";
 
 type Props = {
   conversation: Conversation;
@@ -15,7 +16,7 @@ const ConversationView: React.FC<Props> = ({ conversation }) => {
 
   useEffect(() => {
     const connect = new HubConnectionBuilder()
-      .withUrl("http://localhost:7252/api/chat")
+      .withUrl("https://localhost:7252/api/chat")
       .build();
 
     setConnection(connect);
@@ -28,7 +29,7 @@ const ConversationView: React.FC<Props> = ({ conversation }) => {
         connect.on("ReceiveMessage", async (message: Message) => {
           // Fetch display name
           const userResponse = await axios.get(
-            `http://localhost:7252/api/user/${message.senderId}`
+            `https://localhost:7252/api/user/${message.senderId}`
           );
           console.log(userResponse);
           const displayName = userResponse.data.displayName;
@@ -49,14 +50,14 @@ const ConversationView: React.FC<Props> = ({ conversation }) => {
     return () => {
       connect.stop();
     };
-  }, [conversation.id]);
+  }, [conversation]);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
 
     try {
       if (connection) {
-        await connection.invoke("SendMessage", conversation.id, newMessage);
+        await connection.invoke("SendMessage", conversation, newMessage);
         setNewMessage("");
       }
     } catch (e) {
@@ -71,12 +72,12 @@ const ConversationView: React.FC<Props> = ({ conversation }) => {
   };
 
   return (
-    <div className="h-full p-4">
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="flex flex-col h-[90vh] w-full">
+      <h2 className="text-2xl text-center mt-4 font-bold text-white mb-4">
         {conversation.conversationName}
       </h2>
-      <div className="bg-white rounded-lg p-4 shadow mb-4">
-        <div className="h-80 overflow-y-auto">
+      <div className="bg-black rounded-lg p-4 shadow flex-grow flex flex-col overflow-hidden">
+        <div className="flex-grow overflow-y-auto">
           {messages.map((msg) => (
             <div key={msg.messageId} className="mb-2">
               <strong>{msg.senderDisplayName}:</strong> {msg.message}
@@ -96,7 +97,7 @@ const ConversationView: React.FC<Props> = ({ conversation }) => {
             onClick={handleSendMessage}
             className="ml-2 bg-blue-500 text-white rounded px-4 py-2"
           >
-            Send
+            <Send size={20} />
           </button>
         </div>
       </div>

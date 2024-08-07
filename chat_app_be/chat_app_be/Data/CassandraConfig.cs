@@ -8,7 +8,7 @@ public class CassandraConfig
 
     public CassandraConfig(IConfiguration configuration)
     {
-        var contactPoints = configuration.GetSection("Cassandra:ContactPoints").Get<string[]>();
+        var contactPoints = configuration.GetSection("Cassandra:ContactPoints").Get<string>();
         var port = configuration.GetValue<int>("Cassandra:Port");
         var keyspace = configuration.GetValue<string>("Cassandra:Keyspace");
 
