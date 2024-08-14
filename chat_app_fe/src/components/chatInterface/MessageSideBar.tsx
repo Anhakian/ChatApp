@@ -39,12 +39,16 @@ const MessageSideBar: React.FC<Props> = ({
         </button>
       </div>
       <div className="w-full">
-        <AddConversationButton onAddConversationClick={onAddConversationClick} isOpen={isOpen} />
+        <AddConversationButton
+          onAddConversationClick={onAddConversationClick}
+          isOpen={isOpen}
+        />
       </div>
       <div className="space-y-2 flex-grow">
         {conversations.map((conversation) =>
           isOpen ? (
             <ConversationCard
+              key={conversation.conversationId}
               conversation={conversation as Conversation}
               onClick={() => onConversationClick(conversation as Conversation)}
             />

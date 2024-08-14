@@ -94,8 +94,10 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IConversationMessageRepository, ConversationMessageRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
+builder.Services.AddScoped<IConversationMessageService, ConversationMessageService>();
 
 // Configure Logging
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

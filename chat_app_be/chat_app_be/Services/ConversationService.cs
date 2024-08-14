@@ -5,23 +5,24 @@ using chat_app_be.Models.Response;
 using chat_app_be.Repositories.Interfaces;
 using chat_app_be.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 
 namespace chat_app_be.Services
 {
     public class ConversationService : IConversationService
     {
+        private readonly IHubContext<ChatHub> _hubContext;
         private readonly IConversationRepository _conversationRepository;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<ConversationService> _logger;
 
-        public ConversationService(IConversationRepository conversationRepository, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<ConversationService> logger)
+        public ConversationService(IHubContext<ChatHub> hubContext, IConversationRepository conversationRepository, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<ConversationService> logger)
         {
+            _hubContext = hubContext;
             _conversationRepository = conversationRepository;
             _userManager = userManager;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
@@ -60,6 +61,9 @@ namespace chat_app_be.Services
 
                 await _conversationRepository.CreateConversation(conversation);
                 var response = _mapper.Map<ConversationResponseDto>(conversation);
+
+                await _hubContext.Clients.User(user1.Id).SendAsync("JoinConversation", conversation.Id, user1.Id);
+                await _hubContext.Clients.User(user2.Id).SendAsync("JoinConversation", conversation.Id, user2.Id);
 
                 return new Response(StatusCodes.Status200OK, $"You have successfully created a conversation with {user2.UserName}", response);
             }

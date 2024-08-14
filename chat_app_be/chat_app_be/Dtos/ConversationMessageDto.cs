@@ -1,0 +1,13 @@
+using System;
+
+namespace chat_app_be.Dtos;
+
+public class ConversationMessageDto
+{
+    public Guid Id { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public string SenderId { get; set; }
+    public string SenderDisplayName { get; set; }
+    public int ConversationId { get; set; }
+    public DateTime Timestamp { get; set; }
+}

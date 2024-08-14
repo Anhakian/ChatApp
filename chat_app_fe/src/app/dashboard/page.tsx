@@ -13,6 +13,7 @@ const Dashboard: React.FC = () => {
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const userId = localStorage.getItem("id");
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -24,7 +25,7 @@ const Dashboard: React.FC = () => {
         }
 
         const response = await fetch(
-          `https://localhost:7252/api/conversation?userName=${encodeURIComponent(
+          `http://localhost:7252/api/conversation?userName=${encodeURIComponent(
             userName
           )}`,
           {
@@ -55,6 +56,9 @@ const Dashboard: React.FC = () => {
 
   const handleConversationClick = (conversation: Conversation) => {
     setSelectedConversation(conversation);
+    console.log(conversation);
+    localStorage.setItem("conversationId", conversation.id.toString());
+    console.log("Id: ", conversation.id);
     // On mobile, close the sidebar when a conversation is selected
     console.log("Selected conversation:", conversation.conversationName);
     if (window.innerWidth < 768) {
@@ -65,31 +69,34 @@ const Dashboard: React.FC = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleCreateConversation = async (userName2: string, conversationName: string) => {
+  const handleCreateConversation = async (
+    userName2: string,
+    conversationName: string
+  ) => {
     try {
-      const userToken = localStorage.getItem('token');
-      if (!userToken) throw new Error('User not logged in');
+      const userToken = localStorage.getItem("token");
+      if (!userToken) throw new Error("User not logged in");
 
-      const userName1 = localStorage.getItem('userName')
+      const userName1 = localStorage.getItem("userName");
 
-      const response = await fetch('https://localhost:7252/api/conversation', {
-        method: 'POST',
+      const response = await fetch("http://localhost:7252/api/conversation", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${userToken}`,
         },
         body: JSON.stringify({ userName1, userName2, conversationName }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const result = await response.json();
       setConversations((prev) => [...prev, result.data]);
       closeModal();
     } catch (error) {
-      console.error('Failed to create conversation:', error);
+      console.error("Failed to create conversation:", error);
       alert("An error occurred: " + error);
     }
   };
@@ -109,7 +116,18 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="flex-grow flex flex-col mb-5">
           {selectedConversation ? (
-            <ConversationView conversation={selectedConversation} />
+            userId ? (
+              <ConversationView
+                conversation={selectedConversation}
+                userId={userId}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-red-500">
+                  User ID not found. Please log in.
+                </p>
+              </div>
+            )
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500">

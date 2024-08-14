@@ -11,6 +11,11 @@ namespace chat_app_be.Mappings
             CreateMap<ConversationRequestDto, ConversationResponseDto>().ReverseMap();
 
             CreateMap<Conversation, ConversationResponseDto>().ReverseMap();
+
+            CreateMap<ConversationMessage, ConversationMessageDto>()
+                .ForMember(dest => dest.SenderDisplayName, opt => opt.Ignore());
+
+            CreateMap<ConversationMessageDto, ConversationMessage>();
         }
     }
 }

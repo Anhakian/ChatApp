@@ -6,10 +6,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=.;Database=ChatApp;Trusted_Connection=True;TrustServerCertificate=True;
+      - Cassandra__ContactPoints=127.0.0.1
+      - CASSANDRA_PORT=9042
+      - CASSANDRA_KEYSPACE=chatapp
     ports:
       - "5000:80"
     depends_on:
       - sqlserver
+      - cassandra
 
   frontend:
     build:
@@ -18,7 +22,7 @@ services:
     environment:
       - NODE_ENV=Development
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -30,5 +34,18 @@ services:
     volumes:
       - sqlserverdata:/var/opt/mssql
 
+  cassandra:
+    image: cassandra:latest
+    container_name: conversation_messages
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCassandraCluster
+      - CASSANDRA_LISTENER_ADDRESS=0.0.0.0
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+
 volumes:
   sqlserverdata:
+  cassandra-data:

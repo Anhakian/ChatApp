@@ -9,7 +9,8 @@
 
     public class ConversationResponseDto
     {
+        public string Id { get; set; }
         public string ConversationName { get; set; } = string.Empty;
     }
-    
+
 }
